@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { scrollToElement } from '../utils/scrollUtils'
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -16,17 +17,13 @@ function Header() {
     // If we're on a product page, navigate to home first
     if (location.pathname !== '/') {
       navigate('/')
+      // Wait longer on mobile for navigation to complete
       setTimeout(() => {
-        const element = document.getElementById(sectionId)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 100)
+        scrollToElement(sectionId)
+      }, 150)
     } else {
-      const element = document.getElementById(sectionId)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
-      }
+      // Immediate scroll on same page
+      scrollToElement(sectionId)
     }
   }
 

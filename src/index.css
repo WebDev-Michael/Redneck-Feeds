@@ -5,10 +5,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Enable momentum scrolling on iOS devices */
+    -webkit-overflow-scrolling: touch;
   }
 
   body {
     @apply m-0 min-w-[320px] min-h-screen;
     background-color: #e0c297;
+    /* Ensure touch scrolling works properly on mobile */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent iOS from zooming on input focus */
+    touch-action: manipulation;
   }
 }

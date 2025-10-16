@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { db } from '../firebase/config'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import Footer from '../components/Footer'
+import { scrollToElement } from '../utils/scrollUtils'
 
 function ProductPage() {
   const { category } = useParams()
@@ -79,12 +80,10 @@ function ProductPage() {
   const handleBackToCategories = () => {
     navigate('/')
     // Wait for navigation to complete, then scroll to categories
+    // Longer delay for mobile devices to ensure DOM is ready
     setTimeout(() => {
-      const categoriesSection = document.getElementById('products')
-      if (categoriesSection) {
-        categoriesSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    }, 100)
+      scrollToElement('products')
+    }, 150)
   }
 
   return (

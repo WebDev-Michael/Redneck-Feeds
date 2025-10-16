@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { scrollToElement } from '../utils/scrollUtils'
 
 function Footer() {
   const currentYear = new Date().getFullYear()
@@ -8,17 +9,13 @@ function Footer() {
   const scrollToSection = (sectionId) => {
     if (location.pathname !== '/') {
       navigate('/')
+      // Wait longer on mobile for navigation to complete
       setTimeout(() => {
-        const element = document.getElementById(sectionId)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 100)
+        scrollToElement(sectionId)
+      }, 150)
     } else {
-      const element = document.getElementById(sectionId)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
-      }
+      // Immediate scroll on same page
+      scrollToElement(sectionId)
     }
   }
 
