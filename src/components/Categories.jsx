@@ -50,6 +50,13 @@ function Categories() {
       description: 'Bulk grains and custom blends for all livestock.',
       icon: '🌾',
       path: '/products/grains'
+    },
+    {
+      id: 'misc',
+      name: 'Misc',
+      description: 'Additional feed products and supplements.',
+      icon: '📦',
+      path: '/products/misc'
     }
   ]
 

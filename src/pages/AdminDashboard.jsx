@@ -31,7 +31,7 @@ function AdminDashboard() {
     inStock: true
   })
 
-  const categories = ['cattle', 'equine', 'poultry', 'swine', 'rabbit', 'sheep-goat', 'grains']
+  const categories = ['cattle', 'equine', 'poultry', 'swine', 'rabbit', 'sheep-goat', 'grains', 'misc']
   
   const categoryLabels = {
     cattle: 'Cattle',
@@ -40,7 +40,8 @@ function AdminDashboard() {
     swine: 'Swine',
     rabbit: 'Rabbit',
     'sheep-goat': 'Sheep & Goat',
-    grains: 'Grains'
+    grains: 'Grains',
+    misc: 'Misc'
   }
 
   // Filter products based on selected category
@@ -274,7 +275,7 @@ function AdminDashboard() {
                 </div>
               </div>
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea
                   required
@@ -296,7 +297,7 @@ function AdminDashboard() {
                 <label htmlFor="inStock" className="ml-2 text-sm font-medium text-gray-700">
                   In Stock
                 </label>
-              </div>
+              </div> */}
 
               <div className="flex gap-4">
                 <button

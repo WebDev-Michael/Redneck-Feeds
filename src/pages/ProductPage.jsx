@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { db } from '../firebase/config'
 import { collection, getDocs, query, where } from 'firebase/firestore'
@@ -6,6 +6,7 @@ import Footer from '../components/Footer'
 
 function ProductPage() {
   const { category } = useParams()
+  const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -45,6 +46,11 @@ function ProductPage() {
       name: 'Grains',
       icon: '🌾',
       description: 'Bulk grains and custom blends for all your livestock needs.'
+    },
+    misc: {
+      name: 'Misc',
+      icon: '📦',
+      description: 'Additional feed products and supplements for all your livestock needs.'
     }
   }
 
@@ -70,8 +76,15 @@ function ProductPage() {
 
   const currentCategory = categoryInfo[category] || { name: 'Products', icon: '🌾', description: 'Quality feed products.' }
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  const handleBackToCategories = () => {
+    navigate('/')
+    // Wait for navigation to complete, then scroll to categories
+    setTimeout(() => {
+      const categoriesSection = document.getElementById('products')
+      if (categoriesSection) {
+        categoriesSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }, 100)
   }
 
   return (
@@ -79,13 +92,12 @@ function ProductPage() {
       {/* Category Hero */}
       <section className="bg-gradient-to-br from-primary to-secondary py-16">
         <div className="max-w-[1200px] mx-auto px-5">
-          <Link 
-            to="/#products" 
-            onClick={scrollToTop}
-            className="inline-flex items-center text-white/90 hover:text-white mb-6 no-underline font-medium transition-colors"
+          <button 
+            onClick={handleBackToCategories}
+            className="inline-flex items-center text-white/90 hover:text-white mb-6 no-underline font-medium transition-colors bg-transparent border-none cursor-pointer text-base"
           >
             ← Back to Categories
-          </Link>
+          </button>
           <div className="flex items-center gap-6 mb-4">
             <div className="text-8xl">{currentCategory.icon}</div>
             <div>
