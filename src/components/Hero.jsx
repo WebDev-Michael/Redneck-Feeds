@@ -16,7 +16,7 @@ function Hero() {
   }
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative mt-[70px]" id="hero" style={{backgroundImage: `url(${heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+    <section className="min-h-screen flex items-center justify-center relative" id="hero" style={{backgroundImage: `url(${heroImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
       {/* Dark overlay for text readability */}
       <div className="absolute inset-0 bg-black/50"></div>
       

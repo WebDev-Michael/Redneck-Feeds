@@ -27,7 +27,7 @@ function About() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 max-w-5xl mx-auto">
           {services.map((service, index) => (
-            <div key={index} className="p-10 rounded-xl text-center transition-all shadow-md hover:-translate-y-2 hover:shadow-xl border border-accent/20 bg-white">
+            <div key={index} className="bg-white p-10 rounded-xl text-center transition-all shadow-md hover:-translate-y-2 hover:shadow-xl border border-accent/20">
               <div className="text-6xl mb-6">{service.icon}</div>
               <h3 className="text-2xl mb-4 text-primary font-bold">{service.title}</h3>
               <p className="text-gray-600 leading-relaxed">{service.description}</p>

@@ -1,9 +1,13 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { db } from '../firebase/config'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 import Footer from '../components/Footer'
 
 function ProductPage() {
   const { category } = useParams()
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
 
   // Category information
   const categoryInfo = {
@@ -44,37 +48,25 @@ function ProductPage() {
     }
   }
 
-  // Placeholder products - will integrate Pay Anywhere API later
-  const [products] = useState([
-    {
-      id: 1,
-      name: `Premium ${categoryInfo[category]?.name || 'Feed'} Starter`,
-      description: 'High-quality starter feed with essential nutrients for optimal growth.',
-      price: 'Contact for pricing',
-      unit: '50 lb bag'
-    },
-    {
-      id: 2,
-      name: `${categoryInfo[category]?.name || 'Feed'} Grower`,
-      description: 'Balanced nutrition formula for growing animals.',
-      price: 'Contact for pricing',
-      unit: '50 lb bag'
-    },
-    {
-      id: 3,
-      name: `${categoryInfo[category]?.name || 'Feed'} Finisher`,
-      description: 'Complete feed designed for finishing and maintenance.',
-      price: 'Contact for pricing',
-      unit: '50 lb bag'
-    },
-    {
-      id: 4,
-      name: `Premium ${categoryInfo[category]?.name || 'Feed'} Mix`,
-      description: 'Custom blend with premium grains and supplements.',
-      price: 'Contact for pricing',
-      unit: '50 lb bag'
+  useEffect(() => {
+    fetchProducts()
+  }, [category])
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true)
+      const q = query(collection(db, 'products'), where('category', '==', category))
+      const querySnapshot = await getDocs(q)
+      const productsList = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      setProducts(productsList)
+    } catch (error) {
+      console.error('Error fetching products:', error)
     }
-  ])
+    setLoading(false)
+  }
 
   const currentCategory = categoryInfo[category] || { name: 'Products', icon: '🌾', description: 'Quality feed products.' }
 
@@ -83,10 +75,7 @@ function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-light-bg">
-      {/* Header spacer */}
-      <div className="h-[70px]"></div>
-
+    <div className="min-h-screen bg-body-bg">
       {/* Category Hero */}
       <section className="bg-gradient-to-br from-primary to-secondary py-16">
         <div className="max-w-[1200px] mx-auto px-5">
@@ -112,23 +101,31 @@ function ProductPage() {
         <div className="max-w-[1200px] mx-auto px-5">
           <h2 className="text-3xl font-bold text-primary mb-8">Available Products</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product) => (
-              <div key={product.id} className="bg-card-bg rounded-xl p-6 shadow-md hover:shadow-xl transition-all border border-accent/20">
-                <div className="mb-4">
-                  <h3 className="text-2xl font-bold text-primary mb-2">{product.name}</h3>
-                  <p className="text-sm text-secondary font-semibold">{product.unit}</p>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-xl text-gray-600">Loading products...</p>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-xl p-8 border border-accent/20">
+              <p className="text-xl text-gray-600 mb-4">No products available in this category yet.</p>
+              <p className="text-gray-500">Check back soon or contact us for availability!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {products.map((product) => (
+                <div key={product.id} className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all border border-accent/20">
+                  <div className="mb-4">
+                    <h3 className="text-2xl font-bold text-primary mb-2">{product.name}</h3>
+                    <p className="text-sm text-secondary font-semibold">{product.unit}</p>
+                  </div>
+                  <p className="text-gray-600 mb-4 leading-relaxed">{product.description}</p>
+                  <div className="flex justify-between items-center">
+                    <p className="text-xl font-bold text-secondary">{product.price}</p>
+                  </div>
                 </div>
-                <p className="text-gray-600 mb-4 leading-relaxed">{product.description}</p>
-                <div className="flex justify-between items-center">
-                  <p className="text-xl font-bold text-secondary">{product.price}</p>
-                  <button className="px-6 py-2 rounded-lg bg-primary text-white font-semibold hover:bg-primary-dark transition-colors">
-                    Inquire
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Call to Action */}
           <div className="mt-16 bg-gradient-to-br from-primary to-secondary rounded-xl p-12 text-center text-white">
@@ -154,4 +151,3 @@ function ProductPage() {
 }
 
 export default ProductPage
-

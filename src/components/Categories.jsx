@@ -66,12 +66,12 @@ function Categories() {
             <Link
               key={category.id}
               to={category.path}
-              className="bg-card-bg rounded-xl overflow-hidden transition-all shadow-md hover:-translate-y-1 hover:shadow-2xl no-underline group border border-accent/20"
+              className="rounded-xl overflow-hidden transition-all shadow-md hover:-translate-y-1 hover:shadow-2xl no-underline group border border-accent/20 bg-white"
             >
               <div className="bg-gradient-to-br from-primary to-secondary h-40 flex items-center justify-center text-7xl">
                 {category.icon}
               </div>
-              <div className="p-4 bg-white">
+              <div className="p-6 bg-white">
                 <h3 className="text-2xl mb-2 text-primary font-bold group-hover:text-primary-dark transition-colors">
                   {category.name}
                 </h3>

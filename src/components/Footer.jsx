@@ -66,7 +66,12 @@ function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-6 text-center">
-          <p className="text-white/60 text-sm">&copy; {currentYear} Redneck Feeds. All rights reserved.</p>
+          <p className="text-white/60 text-sm">
+            &copy; {currentYear} Redneck Feeds. All rights reserved.
+            <Link to="/admin/login" className="text-white/30 hover:text-white/50 transition-colors ml-4 text-xs">
+              ·
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

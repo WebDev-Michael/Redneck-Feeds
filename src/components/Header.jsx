@@ -31,14 +31,14 @@ function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-white/98 shadow-md z-[1000] py-4">
+    <header className="w-full bg-white shadow-md py-4">
       <div className="max-w-[1200px] mx-auto px-5">
-        <nav className="flex justify-between items-center">
+        <nav className="flex justify-between items-center relative">
           <Link to="/" className="no-underline">
             <h2 className="text-primary text-2xl font-bold m-0">🐴 Redneck Feeds LLC</h2>
           </Link>
           
-          <div className={`md:flex md:gap-8 md:items-center ${isMenuOpen ? 'flex' : 'hidden'} fixed md:relative left-0 md:left-auto top-[70px] md:top-auto flex-col md:flex-row bg-white/98 md:bg-transparent w-full md:w-auto text-center md:text-left transition-all py-8 md:py-0 shadow-md md:shadow-none`}>
+          <div className={`md:flex md:gap-8 md:items-center ${isMenuOpen ? 'flex' : 'hidden'} flex-col md:flex-row bg-white md:bg-transparent text-center md:text-left transition-all py-8 md:py-0 shadow-md md:shadow-none absolute left-0 right-0 top-full md:static`}>
             <a onClick={() => scrollToSection('hero')} className="text-gray-800 no-underline font-medium transition-colors hover:text-primary cursor-pointer text-xl md:text-base">Home</a>
             <a onClick={() => scrollToSection('about')} className="text-gray-800 no-underline font-medium transition-colors hover:text-primary cursor-pointer text-xl md:text-base">About</a>
             <a onClick={() => scrollToSection('products')} className="text-gray-800 no-underline font-medium transition-colors hover:text-primary cursor-pointer text-xl md:text-base">Categories</a>

@@ -4,8 +4,6 @@ import Footer from '../components/Footer'
 function NotFound() {
   return (
     <div className="min-h-screen bg-light-bg">
-      <div className="h-[70px]"></div>
-      
       <section className="min-h-[80vh] flex items-center justify-center bg-body-bg">
         <div className="max-w-[600px] mx-auto px-5 text-center">
           <div className="text-9xl mb-8">🌾</div>
