@@ -5,6 +5,20 @@ import { collection, getDocs, query, where } from 'firebase/firestore'
 import Footer from '../components/Footer'
 import { scrollToElement } from '../utils/scrollUtils'
 
+// Helper function to convert Imgur page URLs to direct image URLs
+const convertImgurUrl = (url) => {
+  if (!url) return url
+  const trimmed = url.trim()
+  // Match imgur.com/[id] or www.imgur.com/[id]
+  const imgurMatch = trimmed.match(/imgur\.com\/([a-zA-Z0-9]+)/)
+  if (imgurMatch) {
+    const imageId = imgurMatch[1]
+    // Try .jpg first, as most Imgur images are jpg
+    return `https://i.imgur.com/${imageId}.jpg`
+  }
+  return trimmed
+}
+
 function ProductPage() {
   const { category } = useParams()
   const navigate = useNavigate()
@@ -125,6 +139,32 @@ function ProductPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product) => (
                 <div key={product.id} className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all border border-accent/20">
+                  <div className="mb-4 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center min-h-[350px]">
+                    {product.imageUrl && product.imageUrl.trim() !== '' ? (
+                      <img 
+                        src={convertImgurUrl(product.imageUrl.trim())} 
+                        alt={product.name}
+                        className="w-full h-auto max-h-[500px] object-contain"
+                        loading="lazy"
+                        onError={(e) => {
+                          // Try .png if .jpg fails
+                          const currentSrc = e.target.src
+                          if (currentSrc.endsWith('.jpg')) {
+                            e.target.src = currentSrc.replace('.jpg', '.png')
+                          } else if (currentSrc.endsWith('.png')) {
+                            e.target.src = currentSrc.replace('.png', '.gif')
+                          } else {
+                            e.target.onerror = null
+                            e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23e5e7eb" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="Arial" font-size="18" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EImage Error%3C/text%3E%3C/svg%3E'
+                          }
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full min-h-[350px] flex items-center justify-center bg-gray-100">
+                        <span className="text-gray-400 text-sm">No image</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="mb-4">
                     <h3 className="text-2xl font-bold text-primary mb-2">{product.name}</h3>
                     <p className="text-sm text-secondary font-semibold">{product.unit}</p>

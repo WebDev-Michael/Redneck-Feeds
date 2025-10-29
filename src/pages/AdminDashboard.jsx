@@ -28,7 +28,8 @@ function AdminDashboard() {
     price: '',
     unit: '50 lb bag',
     category: 'cattle',
-    inStock: true
+    inStock: true,
+    imageUrl: ''
   })
 
   const categories = ['cattle', 'equine', 'poultry', 'swine', 'rabbit', 'sheep-goat', 'grains', 'misc']
@@ -42,6 +43,20 @@ function AdminDashboard() {
     'sheep-goat': 'Sheep & Goat',
     grains: 'Grains',
     misc: 'Misc'
+  }
+
+  // Helper function to convert Imgur page URLs to direct image URLs
+  const convertImgurUrl = (url) => {
+    if (!url) return url
+    const trimmed = url.trim()
+    // Match imgur.com/[id] or www.imgur.com/[id]
+    const imgurMatch = trimmed.match(/imgur\.com\/([a-zA-Z0-9]+)/)
+    if (imgurMatch) {
+      const imageId = imgurMatch[1]
+      // Try .jpg first, as most Imgur images are jpg
+      return `https://i.imgur.com/${imageId}.jpg`
+    }
+    return trimmed
   }
 
   // Filter products based on selected category
@@ -67,6 +82,12 @@ function AdminDashboard() {
         id: doc.id,
         ...doc.data()
       }))
+      // Debug: Log products with imageUrl to verify data
+      productsList.forEach(product => {
+        if (product.imageUrl) {
+          console.log('Product with image:', product.name, 'ImageURL:', product.imageUrl)
+        }
+      })
       setProducts(productsList)
     } catch (error) {
       console.error('Error fetching products:', error)
@@ -87,14 +108,21 @@ function AdminDashboard() {
     e.preventDefault()
     
     try {
+      // Prepare data with trimmed and converted imageUrl
+      const trimmedUrl = formData.imageUrl.trim()
+      const productData = {
+        ...formData,
+        imageUrl: trimmedUrl ? convertImgurUrl(trimmedUrl) : ''
+      }
+      
       if (editingProduct) {
         // Update existing product
         const productRef = doc(db, 'products', editingProduct.id)
-        await updateDoc(productRef, formData)
+        await updateDoc(productRef, productData)
       } else {
         // Add new product
         await addDoc(collection(db, 'products'), {
-          ...formData,
+          ...productData,
           createdAt: new Date()
         })
       }
@@ -106,7 +134,8 @@ function AdminDashboard() {
         price: '',
         unit: '50 lb bag',
         category: 'cattle',
-        inStock: true
+        inStock: true,
+        imageUrl: ''
       })
       setShowAddForm(false)
       setEditingProduct(null)
@@ -125,9 +154,12 @@ function AdminDashboard() {
       price: product.price,
       unit: product.unit,
       category: product.category,
-      inStock: product.inStock
+      inStock: product.inStock,
+      imageUrl: product.imageUrl || ''
     })
     setShowAddForm(true)
+    // Scroll to top to show the edit form
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleDelete = async (productId) => {
@@ -151,7 +183,8 @@ function AdminDashboard() {
       price: '',
       unit: '50 lb bag',
       category: 'cattle',
-      inStock: true
+      inStock: true,
+      imageUrl: ''
     })
   }
 
@@ -226,6 +259,39 @@ function AdminDashboard() {
               {editingProduct ? 'Edit Product' : 'Add New Product'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Product Image URL</label>
+                <input
+                  type="text"
+                  value={formData.imageUrl}
+                  onChange={(e) => setFormData({...formData, imageUrl: e.target.value.trim()})}
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                />
+                <p className="text-xs text-gray-500 mt-1">Enter a URL to an image of the product</p>
+                <p className="text-xs text-blue-600 mt-1">💡 For Imgur links, use direct image URLs: https://i.imgur.com/[id].jpg</p>
+                {formData.imageUrl && (
+                  <div className="mt-3">
+                    <div className="rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center min-h-[200px]">
+                      <img 
+                        src={convertImgurUrl(formData.imageUrl)} 
+                        alt="Preview"
+                        className="w-full h-auto max-h-[300px] object-contain"
+                        onError={(e) => {
+                          // Try .png if .jpg fails
+                          const currentSrc = e.target.src
+                          if (currentSrc.endsWith('.jpg')) {
+                            e.target.src = currentSrc.replace('.jpg', '.png')
+                          } else {
+                            e.target.style.display = 'none'
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
@@ -341,11 +407,37 @@ function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProducts.map(product => (
                <div key={product.id} className="bg-white rounded-xl p-6 border border-accent/20 hover:shadow-lg transition-shadow">
+                 <div className="mb-4 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center min-h-[300px]">
+                   {product.imageUrl && product.imageUrl.trim() !== '' ? (
+                     <img 
+                       src={convertImgurUrl(product.imageUrl.trim())} 
+                       alt={product.name}
+                       className="w-full h-auto max-h-[400px] object-contain"
+                       loading="lazy"
+                       onError={(e) => {
+                         // Try .png if .jpg fails
+                         const currentSrc = e.target.src
+                         if (currentSrc.endsWith('.jpg')) {
+                           e.target.src = currentSrc.replace('.jpg', '.png')
+                         } else if (currentSrc.endsWith('.png')) {
+                           e.target.src = currentSrc.replace('.png', '.gif')
+                         } else {
+                           e.target.onerror = null
+                           e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23e5e7eb" width="400" height="300"/%3E%3Ctext fill="%239ca3af" font-family="Arial" font-size="18" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EImage Error%3C/text%3E%3C/svg%3E'
+                         }
+                       }}
+                     />
+                   ) : (
+                     <div className="w-full min-h-[300px] flex items-center justify-center bg-gray-100">
+                       <span className="text-gray-400 text-sm">No image</span>
+                     </div>
+                   )}
+                 </div>
                  <div className="mb-4">
                    <h3 className="text-xl font-bold text-primary">{product.name}</h3>
                    <p className="text-sm text-secondary font-semibold">{product.category}</p>
                  </div>
-                
+                 
                 <p className="text-gray-600 mb-2">{product.description}</p>
                 <p className="text-lg font-bold text-secondary mb-2">{product.price}</p>
                 <p className="text-sm text-gray-500 mb-4">{product.unit}</p>
