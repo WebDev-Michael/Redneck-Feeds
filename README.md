@@ -42,10 +42,6 @@ The admin login is discreetly placed in the footer (look for a tiny dot after co
 - Login: `/admin/login`
 - Dashboard: `/admin/dashboard`
 
-## 🔥 Firebase Setup
-
-See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for detailed Firebase configuration instructions.
-
 **Quick setup:**
 1. Create Firebase project
 2. Enable Authentication (Email/Password)
